@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 
 const generateToken = (userId) =>{
     return jwt.sign(
-        {id: userId} ,
-        process.env.JWT_SECRET ,
-        { expiresIn: "7d"}
+        {id: userId} , // payload
+        process.env.JWT_SECRET , // secret key
+        { expiresIn: "7d"} // expiry time
     );
 };
 

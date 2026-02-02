@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// user schema defined 
+
 const userSchema = new mongoose.Schema(
   {
     email: {
