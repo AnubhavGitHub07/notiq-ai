@@ -4,13 +4,13 @@ import mongoose from "mongoose";
 
 const noteSchema = new mongoose.Schema(
     {
-        title: { 
+        title: {
             type: String,
             required: true,
             trim: true,
         },
 
-        content: { 
+        content: {
             type: String,
             required: true,
         },
@@ -43,6 +43,23 @@ const noteSchema = new mongoose.Schema(
                 type: String,
             },
         ],
+attachments: [
+  {
+    url: {
+      type: String,
+      required: true,
+    },
+    public_id: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ["image", "pdf"],
+    },
+  },
+],
+
     },
     {
         timestamps: true,
