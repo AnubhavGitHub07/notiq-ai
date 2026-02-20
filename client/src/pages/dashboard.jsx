@@ -630,8 +630,9 @@ function Dashboard() {
                                 <div
                                     key={note._id}
                                     className="note-card"
+                                    data-color={note.color || "default"}
                                     style={{
-                                        animationDelay: `${index * 0.05}s`,
+                                        animationDelay: `${index * 0.06}s`,
                                         backgroundColor: NOTE_COLORS.find(c => c.id === (note.color || "default"))?.bg,
                                         borderColor: NOTE_COLORS.find(c => c.id === (note.color || "default"))?.border
                                     }}
@@ -639,83 +640,90 @@ function Dashboard() {
                                     onMouseLeave={() => setHoveredNote(null)}
                                     onClick={() => openEditNote(note)}
                                 >
-                                    <div className="note-header">
-                                        <div className="note-badges">
-                                            {note.category && note.category !== "General" && (
-                                                <span className="badge category">{note.category}</span>
-                                            )}
-                                            {note.difficulty && (
-                                                <span className={`badge difficulty ${note.difficulty.toLowerCase()}`}>
-                                                    {note.difficulty}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <button
-                                            className={`favorite-btn ${note.isFavorite ? "active" : ""}`}
-                                            onClick={(e) => toggleFavorite(note, e)}
-                                        >
-                                            <HiOutlineHeart />
-                                        </button>
-                                    </div>
-
-                                    <h3 className="note-title">{note.title}</h3>
-
-                                    {note.topic && (
-                                        <div className="note-topic">
-                                            <HiOutlineLightningBolt />
-                                            <span>{note.topic}</span>
-                                        </div>
-                                    )}
-
-                                    <p className="note-excerpt">{note.content}</p>
-
-                                    {note.attachments?.length > 0 && (
-                                        <div className="note-attachments">
-                                            <div className="attachment-thumb">
-                                                {note.attachments[0].type === "image" ? (
-                                                    <img src={note.attachments[0].url} alt="" />
-                                                ) : (
-                                                    <HiOutlinePaperClip />
+                                    <div className="note-card-accent"></div>
+                                    <div className="note-card-body">
+                                        <div className="note-header">
+                                            <div className="note-badges">
+                                                {note.category && note.category !== "General" && (
+                                                    <span className="badge category">{note.category}</span>
+                                                )}
+                                                {note.difficulty && (
+                                                    <span className={`badge difficulty ${note.difficulty.toLowerCase()}`}>
+                                                        {note.difficulty}
+                                                    </span>
                                                 )}
                                             </div>
-                                            {note.attachments.length > 1 && (
-                                                <span className="att-count">+{note.attachments.length - 1}</span>
-                                            )}
+                                            <button
+                                                className={`favorite-btn ${note.isFavorite ? "active" : ""}`}
+                                                onClick={(e) => toggleFavorite(note, e)}
+                                            >
+                                                <HiOutlineHeart />
+                                            </button>
                                         </div>
-                                    )}
 
-                                    {note.tags?.length > 0 && (
-                                        <div className="note-tags">
-                                            {note.tags.slice(0, 3).map((tag, i) => (
-                                                <span
-                                                    key={i}
-                                                    className={`tag clickable ${selectedTags.includes(tag.toLowerCase()) ? 'active' : ''}`}
-                                                    onClick={(e) => toggleTagFilter(tag, e)}
-                                                    title={`Filter by ${tag}`}
-                                                >
-                                                    <HiOutlineTag />
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                            {note.tags.length > 3 && <span className="tag more">+{note.tags.length - 3}</span>}
-                                        </div>
-                                    )}
+                                        <h3 className="note-title">{note.title}</h3>
 
-                                    <div className="note-footer">
-                                        <div className="note-date">
-                                            <HiOutlineClock />
-                                            <span>{formatDate(note.createdAt)}</span>
-                                        </div>
-                                        <div className={`note-actions ${hoveredNote === note._id ? "visible" : ""}`}>
-                                            <button onClick={(e) => openEditNote(note, e)} title="Edit">
-                                                <HiOutlinePencil />
-                                            </button>
-                                            <button onClick={(e) => duplicateNote(note, e)} title="Duplicate">
-                                                <HiOutlineDuplicate />
-                                            </button>
-                                            <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(note); }} title="Delete" className="delete">
-                                                <HiOutlineTrash />
-                                            </button>
+                                        {note.topic && (
+                                            <div className="note-topic">
+                                                <HiOutlineLightningBolt />
+                                                <span>{note.topic}</span>
+                                            </div>
+                                        )}
+
+                                        <p className="note-excerpt">{note.content}</p>
+
+                                        {note.attachments?.length > 0 && (
+                                            <div className="note-attachments">
+                                                <div className="attachment-thumb">
+                                                    {note.attachments[0].type === "image" ? (
+                                                        <img src={note.attachments[0].url} alt="" />
+                                                    ) : (
+                                                        <HiOutlinePaperClip />
+                                                    )}
+                                                </div>
+                                                {note.attachments.length > 1 && (
+                                                    <span className="att-count">+{note.attachments.length - 1}</span>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {note.tags?.length > 0 && (
+                                            <div className="note-tags">
+                                                {note.tags.slice(0, 3).map((tag, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className={`tag clickable ${selectedTags.includes(tag.toLowerCase()) ? 'active' : ''}`}
+                                                        onClick={(e) => toggleTagFilter(tag, e)}
+                                                        title={`Filter by ${tag}`}
+                                                    >
+                                                        <HiOutlineTag />
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                                {note.tags.length > 3 && <span className="tag more">+{note.tags.length - 3}</span>}
+                                            </div>
+                                        )}
+
+                                        <div className="note-footer">
+                                            <div className="note-date">
+                                                <HiOutlineClock />
+                                                <span>{formatDate(note.createdAt)}</span>
+                                            </div>
+                                            <div className="note-word-count">
+                                                <HiOutlineDocumentText />
+                                                <span>{note.content.split(/\s+/).filter(Boolean).length} words</span>
+                                            </div>
+                                            <div className={`note-actions ${hoveredNote === note._id ? "visible" : ""}`}>
+                                                <button onClick={(e) => openEditNote(note, e)} title="Edit">
+                                                    <HiOutlinePencil />
+                                                </button>
+                                                <button onClick={(e) => duplicateNote(note, e)} title="Duplicate">
+                                                    <HiOutlineDuplicate />
+                                                </button>
+                                                <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(note); }} title="Delete" className="delete">
+                                                    <HiOutlineTrash />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

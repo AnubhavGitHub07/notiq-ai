@@ -838,8 +838,8 @@ body {
 /* Notes Grid */
 .notes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
 }
 
 .notes-list {
@@ -852,30 +852,65 @@ body {
 .note-card {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px;
+    border-radius: var(--radius-xl);
+    padding: 0;
     cursor: pointer;
-    transition: all 0.15s ease;
-    animation: fadeIn 0.3s ease backwards;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardEntrance 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
     position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
-@keyframes fadeIn {
+.note-card-accent {
+    height: 4px;
+    width: 100%;
+    background: var(--accent);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    transition: height 0.25s ease;
+}
+
+.note-card[data-color="blue"] .note-card-accent {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+}
+.note-card[data-color="green"] .note-card-accent {
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+}
+.note-card[data-color="purple"] .note-card-accent {
+    background: linear-gradient(90deg, #c084fc, #a855f7);
+}
+.note-card[data-color="orange"] .note-card-accent {
+    background: linear-gradient(90deg, #fb923c, #f97316);
+}
+.note-card[data-color="default"] .note-card-accent {
+    background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+}
+
+.note-card-body {
+    padding: 22px 24px 20px;
+}
+
+@keyframes cardEntrance {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(16px) scale(0.97);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .note-card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 12px 32px rgba(196, 165, 116, 0.10), var(--shadow-lg);
+}
+
+.note-card:hover .note-card-accent {
+    height: 5px;
 }
 
 .note-header {
@@ -892,32 +927,37 @@ body {
 }
 
 .badge {
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
+    border: 1px solid transparent;
 }
 
 .badge.category {
     background: var(--accent-dim);
     color: var(--accent);
+    border-color: rgba(196, 165, 116, 0.18);
 }
 
 .badge.difficulty.easy {
     background: rgba(74, 222, 128, 0.1);
     color: var(--success);
+    border-color: rgba(74, 222, 128, 0.18);
 }
 
 .badge.difficulty.medium {
     background: rgba(251, 191, 36, 0.1);
     color: var(--warning);
+    border-color: rgba(251, 191, 36, 0.18);
 }
 
 .badge.difficulty.hard {
     background: rgba(248, 113, 113, 0.1);
     color: var(--danger);
+    border-color: rgba(248, 113, 113, 0.18);
 }
 
 .favorite-btn {
@@ -946,10 +986,11 @@ body {
 
 .note-title {
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 650;
     color: var(--text-primary);
     margin-bottom: 8px;
     line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
 .note-topic {
@@ -959,18 +1000,31 @@ body {
     font-size: 0.8rem;
     color: var(--accent);
     margin-bottom: 12px;
+    font-weight: 500;
 }
 
 .note-excerpt {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin-bottom: 16px;
+    position: relative;
+}
+
+.note-excerpt::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: linear-gradient(transparent, var(--bg-elevated));
+    pointer-events: none;
 }
 
 .note-attachments {
@@ -1020,68 +1074,104 @@ body {
     gap: 4px;
     padding: 4px 10px;
     background: var(--bg-secondary);
-    border-radius: 4px;
-    font-size: 0.75rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
     color: var(--text-secondary);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .tag.more {
     background: var(--accent-dim);
     color: var(--accent);
+    border-color: rgba(196, 165, 116, 0.18);
 }
 
 .note-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    border-top: 1px solid transparent;
+    background-image: linear-gradient(var(--border), var(--border));
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
+.note-word-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    opacity: 0.7;
 }
 
 .note-date {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-tertiary);
+    font-weight: 500;
 }
 
 .note-actions {
     display: flex;
     gap: 4px;
     opacity: 0;
-    transition: opacity 0.15s ease;
+    transform: translateX(8px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .note-card:hover .note-actions.visible {
     opacity: 1;
+    transform: translateX(0);
 }
 
 .note-actions button {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: 50%;
     color: var(--text-secondary);
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .note-actions button:hover {
     background: var(--accent);
     border-color: var(--accent);
     color: var(--bg-primary);
+    transform: scale(1.1);
 }
 
 .note-actions button.delete:hover {
     background: var(--danger);
     border-color: var(--danger);
     color: white;
+    transform: scale(1.1);
+}
+
+/* Favorite pulse animation */
+.favorite-btn.active svg {
+    fill: var(--accent);
+    animation: heartPulse 0.4s ease;
+}
+
+@keyframes heartPulse {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3); }
+    60% { transform: scale(0.9); }
+    100% { transform: scale(1); }
 }
 
 /* ===== Modal ===== */
