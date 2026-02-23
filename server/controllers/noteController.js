@@ -5,6 +5,7 @@ import streamifier from "streamifier";
 
 
 
+
 // Create Note
 const createNote = asyncHandler(async (req, res) => {
   const { title, content, category, topic, difficulty, tags, isFavorite, color } = req.body;
@@ -145,4 +146,42 @@ const uploadAttachment = asyncHandler(async (req, res) => {
 
 
 
-export { createNote, getNotes, updateNote, deleteNote, uploadAttachment };
+const deleteAttachment = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { publicId } = req.query;
+  const note = await Note.findById(id);
+
+  if (!note) {
+    res.status(404);
+    throw new Error("Note not found");
+  }
+
+  if (note.user.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("Not authorized");
+  }
+
+  if (!publicId) {
+    res.status(400);
+    throw new Error("Public ID is required");
+  }
+
+  // Delete from Cloudinary
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error("Cloudinary deletion failed:", error);
+    // Continue anyway to keep DB consistent if user wants it gone
+  }
+
+  // Remove from database
+  note.attachments = note.attachments.filter(
+    (att) => att.public_id !== publicId
+  );
+
+  await note.save();
+
+  res.status(200).json(note);
+});
+
+export { createNote, getNotes, updateNote, deleteNote, uploadAttachment, deleteAttachment };

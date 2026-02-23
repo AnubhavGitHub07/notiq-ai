@@ -1,7 +1,7 @@
 // add notes routes 
 
 import express from "express";
-import { createNote, getNotes, updateNote, deleteNote, uploadAttachment } from "../controllers/noteController.js";
+import { createNote, getNotes, updateNote, deleteNote, uploadAttachment, deleteAttachment } from "../controllers/noteController.js";
 import protect from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
 
@@ -18,6 +18,7 @@ noteRoutes.route("/:id")
     .delete(deleteNote);
 
 noteRoutes.post("/:id/upload", upload.single("file"), uploadAttachment);
+noteRoutes.delete("/:id/attachments", deleteAttachment);
 
 
 export default noteRoutes;

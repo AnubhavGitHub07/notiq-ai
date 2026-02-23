@@ -27,7 +27,8 @@ import {
     HiOutlineMenu,
     HiOutlineChevronRight,
     HiOutlineTrendingUp,
-    HiOutlineBell
+    HiOutlineBell,
+    HiOutlineQuestionMarkCircle
 } from "react-icons/hi";
 
 import {
@@ -36,6 +37,7 @@ import {
 
 import API from "../api/axios";
 import "../styles/dashboard.css";
+import ChatBot from "../components/ChatBot";
 
 function Dashboard() {
     // State Management
@@ -65,6 +67,12 @@ function Dashboard() {
     const [hoveredNote, setHoveredNote] = useState(null);
     const [focusedField, setFocusedField] = useState(null);
     const [selectedTags, setSelectedTags] = useState([]);
+
+    // AI States
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiResult, setAiResult] = useState("");
+    const [aiAction, setAiAction] = useState(""); // 'summarize' or 'questions'
+    const [aiSuccess, setAiSuccess] = useState("");
 
     const navigate = useNavigate();
     const userEmail = localStorage.getItem("userEmail") || "user";
@@ -210,6 +218,8 @@ function Dashboard() {
         setUploadSuccess(false);
         setShowModal(true);
         setSelectedFile(null);
+        setAiResult("");
+        setAiAction("");
     };
 
     const openEditNote = (note, e) => {
@@ -226,6 +236,8 @@ function Dashboard() {
         setUploadSuccess(false);
         setShowModal(true);
         setSelectedFile(null);
+        setAiResult("");
+        setAiAction("");
     };
 
     const handleSave = async () => {
@@ -275,6 +287,10 @@ function Dashboard() {
             formData.append("file", selectedFile);
             const res = await API.post(`/notes/${noteId}/upload`, formData);
             setNotes((prev) => prev.map((n) => (n._id === noteId ? res.data : n)));
+            // Update editingNote if it's the same note
+            if (editingNote && editingNote._id === noteId) {
+                setEditingNote(res.data);
+            }
             setSelectedFile(null);
             setUploadSuccess(true);
             setTimeout(() => setUploadSuccess(false), 3000);
@@ -282,6 +298,70 @@ function Dashboard() {
             setFormError("File upload failed. Try again.");
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleDeleteAttachment = async (noteId, publicId) => {
+        try {
+            setUploading(true);
+            const res = await API.delete(`/notes/${noteId}/attachments?publicId=${encodeURIComponent(publicId)}`);
+            setNotes((prev) => prev.map((n) => (n._id === noteId ? res.data : n)));
+            // Update editingNote if it's the same note
+            if (editingNote && editingNote._id === noteId) {
+                setEditingNote(res.data);
+            }
+        } catch (err) {
+            setFormError("Failed to delete attachment. Try again.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // AI Actions
+    const handleGenerateTags = async () => {
+        if (!formContent.trim()) {
+            setFormError("Add some content first to generate tags!");
+            return;
+        }
+
+        try {
+            setAiLoading(true);
+            setFormError("");
+            setAiSuccess("");
+            const res = await API.post("/ai/tags", { title: formTitle, content: formContent });
+            const newTags = res.data.tags.join(", ");
+            setFormTags(prev => prev ? `${prev}, ${newTags}` : newTags);
+            setAiSuccess("Tags generated and added successfully! ✨");
+            setTimeout(() => setAiSuccess(""), 3000);
+        } catch (err) {
+            setFormError(err.response?.data?.message || "Failed to generate tags");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const handleAIAction = async (action) => {
+        if (!formContent.trim()) {
+            setFormError(`Add some content first to ${action}!`);
+            return;
+        }
+
+        try {
+            setAiLoading(true);
+            setAiAction(action);
+            setAiResult("");
+            setFormError("");
+            setAiSuccess("");
+
+            const endpoint = action === "summarize" ? "/ai/summarize" : "/ai/questions";
+            const res = await API.post(endpoint, { title: formTitle, content: formContent });
+
+            setAiResult(action === "summarize" ? res.data.summary : res.data.questions);
+        } catch (err) {
+            setFormError(err.response?.data?.message || `Failed to ${action}`);
+            setAiAction("");
+        } finally {
+            setAiLoading(false);
         }
     };
 
@@ -745,6 +825,12 @@ function Dashboard() {
                         </div>
 
                         <div className="modal-body">
+                            {aiSuccess && (
+                                <div className="ai-success-popup">
+                                    <HiOutlineCheckCircle />
+                                    <span>{aiSuccess}</span>
+                                </div>
+                            )}
                             {formError && (
                                 <div className="error-banner">
                                     <HiOutlineX />
@@ -837,6 +923,112 @@ function Dashboard() {
                                 </div>
                             </div>
 
+                            <div className="form-group ai-section">
+                                <label>AI Power ✨</label>
+                                <div className="ai-actions">
+                                    <button
+                                        type="button"
+                                        className={`ai-btn ${aiAction === 'summarize' ? 'active' : ''}`}
+                                        onClick={() => handleAIAction('summarize')}
+                                        disabled={aiLoading}
+                                    >
+                                        <HiOutlineSparkles />
+                                        <span>Summarize</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`ai-btn ${aiAction === 'questions' ? 'active' : ''}`}
+                                        onClick={() => handleAIAction('questions')}
+                                        disabled={aiLoading}
+                                    >
+                                        <HiOutlineQuestionMarkCircle />
+                                        <span>Questions</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="ai-btn tags"
+                                        onClick={handleGenerateTags}
+                                        disabled={aiLoading}
+                                    >
+                                        <HiOutlineTag />
+                                        <span>Generate Tags</span>
+                                    </button>
+                                </div>
+
+                                {aiLoading && (
+                                    <div className="ai-loading">
+                                        <div className="ai-spinner"></div>
+                                        <span>AI is thinking...</span>
+                                    </div>
+                                )}
+
+                                {aiResult && !aiLoading && (
+                                    <div className="ai-result-container">
+                                        <div className="ai-result-header">
+                                            <span>AI {aiAction === 'summarize' ? 'Summary' : 'Questions'}</span>
+                                            <button
+                                                type="button"
+                                                className="copy-btn"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(aiResult);
+                                                    // Optional: add a toast or temporary success state
+                                                }}
+                                                title="Copy to clipboard"
+                                            >
+                                                <HiOutlineDuplicate />
+                                            </button>
+                                        </div>
+                                        <div className="ai-result-content">
+                                            {aiResult.split('\n').map((line, i) => (
+                                                <p key={i}>{line}</p>
+                                            ))}
+                                        </div>
+                                        <div className="ai-result-footer">
+                                            <button
+                                                type="button"
+                                                className="insert-btn"
+                                                onClick={() => {
+                                                    setFormContent(prev => `${prev}\n\n--- AI ${aiAction === 'summarize' ? 'Summary' : 'Questions'} ---\n${aiResult}`);
+                                                    setAiSuccess(`${aiAction === 'summarize' ? 'Summary' : 'Questions'} added to note! ✨`);
+                                                    setTimeout(() => setAiSuccess(""), 3000);
+                                                }}
+                                            >
+                                                Insert into Note
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+
+                            {editingNote && editingNote.attachments?.length > 0 && (
+                                <div className="form-group">
+                                    <label>Existing Attachments</label>
+                                    <div className="existing-attachments">
+                                        {editingNote.attachments.map((att) => (
+                                            <div key={att.public_id} size="small" className="attachment-item">
+                                                <div className="attachment-preview">
+                                                    {att.type === "image" ? (
+                                                        <img src={att.url} alt="" />
+                                                    ) : (
+                                                        <HiOutlinePaperClip />
+                                                    )}
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="delete-att-btn"
+                                                    onClick={() => handleDeleteAttachment(editingNote._id, att.public_id)}
+                                                    title="Remove attachment"
+                                                    disabled={uploading}
+                                                >
+                                                    <HiOutlineX />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="form-group">
                                 <label>Attachment</label>
                                 <div className="file-input">
@@ -903,6 +1095,9 @@ function Dashboard() {
                     </div>
                 </div>
             )}
+
+            {/* AI ChatBot */}
+            <ChatBot notes={notes} />
         </div>
     );
 }

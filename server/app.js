@@ -7,6 +7,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import passport from "./config/passport.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 app.use(passport.initialize());
@@ -19,9 +20,8 @@ app.use(cors({
 }));
 
 
-
-
 app.use(express.json());
+app.use("/api/ai", aiRoutes);
 
 app.use(helmet());
 app.use(compression());
