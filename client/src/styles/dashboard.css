@@ -155,18 +155,33 @@ body {
 .brand-icon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    background: linear-gradient(135deg, #fcd34d, #f59e0b, #d97706);
     background-size: 200% 200%;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #1e293b;
     font-size: 20px;
     flex-shrink: 0;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-    animation: quantumGlow 3s infinite ease-in-out, gradientShift 5s infinite linear;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    animation: sunshineGlow 3s infinite ease-in-out, gradientShift 5s infinite linear;
+}
+
+@keyframes sunshineGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(252, 211, 77, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.7), 0 0 15px rgba(217, 119, 6, 0.5);
+        transform: scale(1.02);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(252, 211, 77, 0.4);
+    }
 }
 
 .brand-text {
@@ -182,7 +197,7 @@ body {
 .brand-name {
     font-size: 1.25rem;
     font-weight: 800;
-    background: linear-gradient(to right, #6366f1, #ec4899, #a855f7, #6366f1);
+    background: linear-gradient(to right, #f59e0b, #fbbf24, #fef08a, #f59e0b);
     background-size: 300% auto;
     -webkit-background-clip: text;
     background-clip: text;
