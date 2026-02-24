@@ -12,7 +12,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/api/auth/google/callback",
+            callbackURL: `${process.env.SERVER_URL || "http://localhost:3000"}/api/auth/google/callback`,
             proxy: true,
         },
         async (accessToken, refreshToken, profile, done) => {
@@ -37,6 +37,7 @@ passport.use(
                 }
                 return done(null, user);
             } catch (err) {
+                console.error("Error in Google Strategy:", err);
                 return done(err, null);
             }
         }
@@ -49,7 +50,7 @@ passport.use(
         {
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: "/api/auth/github/callback",
+            callbackURL: `${process.env.SERVER_URL || "http://localhost:3000"}/api/auth/github/callback`,
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -75,6 +76,7 @@ passport.use(
                 }
                 return done(null, user);
             } catch (err) {
+                console.error("Error in GitHub Strategy:", err);
                 return done(err, null);
             }
         }

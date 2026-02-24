@@ -13,7 +13,7 @@ const app = express();
 app.use(passport.initialize());
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -34,7 +34,7 @@ app.use("/api/auth", router);
 app.use("/api/notes", noteRoutes);
 
 app.get("/", (req, res) => {
-  res.status(200).send("NotiqAI Backend is running 🚀");
+    res.status(200).send("NotiqAI Backend is running 🚀");
 });
 
 app.use(errorHandler);
