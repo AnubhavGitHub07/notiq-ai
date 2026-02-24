@@ -33,6 +33,10 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/auth", router);
 app.use("/api/notes", noteRoutes);
 
+app.get("/", (req, res) => {
+  res.status(200).send("NotiqAI Backend is running 🚀");
+});
+
 app.use(errorHandler);
 
 app.get("/health", (req, res) => { // Health Check API
