@@ -34,10 +34,12 @@ import {
 import {
     HiOutlineDocumentPlus,
 } from "react-icons/hi2";
+import ReactMarkdown from "react-markdown";
 
 import API from "../api/axios";
 import "../styles/dashboard.css";
 import ChatBot from "../components/ChatBot";
+import { BrainCircuit } from "lucide-react";
 
 function Dashboard() {
     // State Management
@@ -456,7 +458,7 @@ function Dashboard() {
                 <div className="sidebar-content">
                     <div className="sidebar-brand">
                         <div className="brand-icon">
-                            <HiOutlineBookOpen />
+                            <BrainCircuit size={24} />
                         </div>
                         <div className="brand-text">
                             <span className="brand-name">Notiq AI  </span>
@@ -979,9 +981,7 @@ function Dashboard() {
                                             </button>
                                         </div>
                                         <div className="ai-result-content">
-                                            {aiResult.split('\n').map((line, i) => (
-                                                <p key={i}>{line}</p>
-                                            ))}
+                                            <ReactMarkdown>{aiResult}</ReactMarkdown>
                                         </div>
                                         <div className="ai-result-footer">
                                             <button

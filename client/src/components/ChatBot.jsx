@@ -8,6 +8,7 @@ import {
     HiOutlineChevronDown,
     HiOutlineChip
 } from 'react-icons/hi';
+import ReactMarkdown from 'react-markdown';
 import API from '../api/axios';
 
 const ChatBot = ({ notes }) => {
@@ -151,7 +152,11 @@ const ChatBot = ({ notes }) => {
                         {messages.map((m, i) => (
                             <div key={i} className={`message ${m.role}`}>
                                 <div className="message-content">
-                                    {m.content}
+                                    {m.role === 'assistant' ? (
+                                        <ReactMarkdown>{m.content}</ReactMarkdown>
+                                    ) : (
+                                        m.content
+                                    )}
                                 </div>
                             </div>
                         ))}
