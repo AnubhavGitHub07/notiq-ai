@@ -57,11 +57,13 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:3000/api/auth/google";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    window.location.href = `${baseUrl}/api/auth/google`;
   };
 
   const handleGitHubLogin = () => {
-    window.location.href = "http://localhost:3000/api/auth/github";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    window.location.href = `${baseUrl}/api/auth/github`;
   };
 
   return (
