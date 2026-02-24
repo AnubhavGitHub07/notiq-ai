@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 console.log("Initializing Google Strategy...");
+console.log("Callback URL:", `${process.env.SERVER_URL || "http://localhost:3000"}/api/auth/google/callback`);
+
 passport.use(
     new GoogleStrategy(
         {
