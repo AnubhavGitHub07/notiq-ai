@@ -13,8 +13,10 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(passport.initialize());
 
+const sanitizeOrigin = (url) => url ? url.replace(/\/$/, "") : url;
+
 const allowedOrigins = [
-    process.env.CLIENT_URL,
+    sanitizeOrigin(process.env.CLIENT_URL),
     "https://notiqai.vercel.app",
     "https://notiq-ai-beta.vercel.app",
     "http://localhost:5173"
@@ -22,11 +24,17 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function (origin, callback) {
-        // allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".vercel.app")) {
+
+        const sanitizedOrigin = sanitizeOrigin(origin);
+        const isAllowed = allowedOrigins.includes(sanitizedOrigin) ||
+            sanitizedOrigin.endsWith(".vercel.app");
+
+        if (isAllowed) {
+            // Reflect the EXACT origin from the request to avoid mismatch
             return callback(null, true);
         } else {
+            console.error(`CORS Blocked for origin: ${origin}`);
             return callback(new Error('Not allowed by CORS'));
         }
     },
@@ -34,6 +42,14 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 }));
+
+app.get("/ping", (req, res) => {
+    res.status(200).json({
+        message: "pong",
+        origin: req.headers.origin,
+        allowedOrigins
+    });
+});
 
 
 app.use(express.json());
