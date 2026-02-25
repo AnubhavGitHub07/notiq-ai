@@ -275,7 +275,13 @@ function Dashboard() {
             }
             setShowModal(false);
         } catch (err) {
-            setFormError(err.response?.data?.message || "Failed to save. Try again.");
+            console.error("Save Error Details:", {
+                status: err.response?.status,
+                data: err.response?.data,
+                message: err.message
+            });
+            const errorMsg = err.response?.data?.message || err.message || "Failed to save. Try again.";
+            setFormError(`${errorMsg} (Status: ${err.response?.status || 'Unknown'})`);
         } finally {
             setSaving(false);
         }
@@ -336,7 +342,13 @@ function Dashboard() {
             setAiSuccess("Tags generated and added successfully! ✨");
             setTimeout(() => setAiSuccess(""), 3000);
         } catch (err) {
-            setFormError(err.response?.data?.message || "Failed to generate tags");
+            console.error("AI Tags Error:", {
+                status: err.response?.status,
+                data: err.response?.data,
+                message: err.message
+            });
+            const errorMsg = err.response?.data?.message || err.message || "Failed to generate tags";
+            setFormError(`${errorMsg} (Status: ${err.response?.status || 'Unknown'})`);
         } finally {
             setAiLoading(false);
         }
@@ -360,7 +372,13 @@ function Dashboard() {
 
             setAiResult(action === "summarize" ? res.data.summary : res.data.questions);
         } catch (err) {
-            setFormError(err.response?.data?.message || `Failed to ${action}`);
+            console.error(`AI ${action} Error:`, {
+                status: err.response?.status,
+                data: err.response?.data,
+                message: err.message
+            });
+            const errorMsg = err.response?.data?.message || err.message || `Failed to ${action}`;
+            setFormError(`${errorMsg} (Status: ${err.response?.status || 'Unknown'})`);
             setAiAction("");
         } finally {
             setAiLoading(false);

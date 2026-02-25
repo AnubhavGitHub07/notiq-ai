@@ -13,8 +13,23 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(passport.initialize());
 
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "https://notiqai.vercel.app",
+    "https://notiq-ai-beta.vercel.app",
+    "http://localhost:5173"
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".vercel.app")) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

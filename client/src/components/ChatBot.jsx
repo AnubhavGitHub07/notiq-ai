@@ -70,7 +70,13 @@ const ChatBot = ({ notes }) => {
 
             setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply }]);
         } catch (err) {
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I hit a snag. Please try again! 😅' }]);
+            console.error("ChatBot AI Error:", {
+                status: err.response?.status,
+                data: err.response?.data,
+                message: err.message
+            });
+            const statusSuffix = err.response ? ` (Status: ${err.response.status})` : "";
+            setMessages(prev => [...prev, { role: 'assistant', content: `Sorry, I hit a snag: ${err.response?.data?.message || err.message}${statusSuffix}. Please try again! 😅` }]);
         } finally {
             setLoading(false);
         }
