@@ -156,16 +156,16 @@ body {
     width: 40px;
     height: 40px;
     background: transparent;
-    border: 1px solid  rgba(255, 189, 8, 0.946);
+    border: 1px solid rgba(255, 189, 8, 0.946);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: rgba(255, 189, 8, 0.946);
-     animation: iconGlowSignup 3s ease-in-out infinite;
+    animation: iconGlowSignup 3s ease-in-out infinite;
     font-size: 20px;
     flex-shrink: 0;
-    
+
     filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.3));
 }
 
@@ -2122,6 +2122,14 @@ body {
 .note-dropdown::-webkit-scrollbar {
     display: none;
     /* Hide for Chrome, Safari, Edge */
+}
+
+.no-notes {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    text-align: center;
+    font-style: italic;
 }
 
 .note-option {
