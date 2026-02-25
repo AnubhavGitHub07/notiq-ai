@@ -370,9 +370,16 @@ function Dashboard() {
             const endpoint = action === "summarize" ? "/ai/summarize" : "/ai/questions";
             const res = await API.post(endpoint, { title: formTitle, content: formContent });
 
-            setAiResult(action === "summarize" ? res.data.summary : res.data.questions);
-            setAiSuccess(`Note ${action === 'summarize' ? 'summarized' : 'questions generated'} successfully! ✨`);
-            setTimeout(() => setAiSuccess(""), 3000);
+            const result = action === "summarize" ? res.data.summary : res.data.questions;
+            setAiResult(result);
+
+            // Explicitly set success message based on action
+            const successMsg = action === 'summarize'
+                ? "Note summarized successfully! ✨"
+                : "Questions generated successfully! ✨";
+
+            setAiSuccess(successMsg);
+            setTimeout(() => setAiSuccess(""), 4000);
         } catch (err) {
             console.error(`AI ${action} Error:`, {
                 status: err.response?.status,
