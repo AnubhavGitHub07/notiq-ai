@@ -371,6 +371,8 @@ function Dashboard() {
             const res = await API.post(endpoint, { title: formTitle, content: formContent });
 
             setAiResult(action === "summarize" ? res.data.summary : res.data.questions);
+            setAiSuccess(`Note ${action === 'summarize' ? 'summarized' : 'questions generated'} successfully! ✨`);
+            setTimeout(() => setAiSuccess(""), 3000);
         } catch (err) {
             console.error(`AI ${action} Error:`, {
                 status: err.response?.status,
@@ -844,13 +846,13 @@ function Dashboard() {
                             </button>
                         </div>
 
+                        {aiSuccess && (
+                            <div className="ai-success-popup">
+                                <HiOutlineCheckCircle />
+                                <span>{aiSuccess}</span>
+                            </div>
+                        )}
                         <div className="modal-body">
-                            {aiSuccess && (
-                                <div className="ai-success-popup">
-                                    <HiOutlineCheckCircle />
-                                    <span>{aiSuccess}</span>
-                                </div>
-                            )}
                             {formError && (
                                 <div className="error-banner">
                                     <HiOutlineX />

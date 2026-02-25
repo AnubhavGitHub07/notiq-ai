@@ -70,13 +70,14 @@ export const generateTags = async (req, res, next) => {
     const prompt = `
 You are an expert software engineer.
 
-Generate ONLY 5 short technical tags (single words or short phrases)
-based on this note.
+Generate ONLY 5 short technical tags (single words or short phrases) based on this note.
 
-Rules:
-- lowercase
-- no explanations
-- return comma separated tags only
+Strict Rules:
+- Return ONLY the tags.
+- Use comma separation.
+- No introductory text (NO "Here are the tags", NO "Based on the note...").
+- No closing text.
+- lowercase only.
 
 Title: ${title || "Untitled"}
 Content: ${content}
@@ -84,11 +85,18 @@ Content: ${content}
 
     const result = await generateAIResponse(prompt);
 
-    const tags = result
-      .split(",")
-      .map((tag) => tag.trim().toLowerCase());
+    // Robust parsing: strip introductory conversational lines and extract tags
+    const cleanResult = result
+      .replace(/^(here are|based on|tags for|this note).*/gi, '') // Remove obvious intro lines
+      .replace(/^(tags|technical tags):/gi, '') // Remove "Tags:" or "Technical Tags:"
+      .trim();
 
-    res.status(200).json({ tags });
+    const tags = cleanResult
+      .split(",")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter((tag) => tag.length > 0 && tag.length < 30); // Basic validation
+
+    res.status(200).json({ tags: tags.slice(0, 5) });
   } catch (err) {
     next(err);
   }
