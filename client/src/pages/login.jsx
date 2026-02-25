@@ -57,12 +57,12 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://notiq-ai-backend.onrender.com";
     window.location.href = `${baseUrl}/api/auth/google`;
   };
 
   const handleGitHubLogin = () => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://notiq-ai-backend.onrender.com";
     window.location.href = `${baseUrl}/api/auth/github`;
   };
 
