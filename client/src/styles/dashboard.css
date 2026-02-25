@@ -2127,7 +2127,7 @@ body {
 .no-notes {
     padding: 12px 14px;
     font-size: 0.9rem;
-    color: whitesmoke;
+    color: var(--text-tertiary);
     text-align: center;
     font-style: italic;
 }
